@@ -8,6 +8,7 @@ namespace lab5.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long AttendanceId { get; set; }
+        [Required]
         [ForeignKey("StudentId")]
         public Guid StudentId { get; set; }
         public Student Student { get; set; }
