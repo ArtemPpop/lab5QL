@@ -11,11 +11,14 @@ namespace lab5.Models
         public long GradeId { get; set; }
         [Required]
         public int Value { get; set; }
-        public Guid StudentId { get; set; }
+        [ForeignKey("StudentId")]
+        public long StudentId { get; set; }
         public Student? Student { get; set; }
-        public Guid SubjectId { get; set; }
+        [ForeignKey("SubjectId")]
+        public long SubjectId { get; set; }
         public Subject? Subject { get; set; }
-        public Guid TeacherId { get; set; }
+        [ForeignKey("TeacherId")]
+        public long TeacherId { get; set; }
         public Teacher? Teacher { get; set; }
         public DateTime CreateAt { get; set; }
         public Grade()

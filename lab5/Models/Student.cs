@@ -10,7 +10,9 @@ namespace lab5.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long StudentId { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
+        [Required]
+        public int NumberClass { get; set; }
         public DateTime DateOfBirth { get; set; }
         public ICollection<Grade> Grades { get; set; }
         public ICollection<Attendance> Attendances { get; set; }

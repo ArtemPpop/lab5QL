@@ -10,7 +10,7 @@ namespace lab5.Models
         public long AttendanceId { get; set; }
         [Required]
         [ForeignKey("StudentId")]
-        public Guid StudentId { get; set; }
+        public long StudentId { get; set; }
         public Student Student { get; set; }
         public DateTime Date { get; set; }
         public bool IsPresent { get; set; }

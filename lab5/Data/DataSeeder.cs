@@ -34,11 +34,12 @@ namespace lab5.Data
             }
             if (!db.Students.Any())
             {
-                for (int i = 1; i <= 10; i++)
+                for (int i = 1; i <= 25; i++)
                 {
                     var student = new Student
                     {
                         Name = Name.FullName(),
+                        NumberClass = new Random().Next(1,11),
                         DateOfBirth = DateTime.Now.AddYears(-new Random().Next(6, 18)),
                     };
                     db.Students.Add(student);
