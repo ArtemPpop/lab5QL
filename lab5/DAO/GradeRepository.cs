@@ -44,6 +44,7 @@ namespace lab5.DAO
                 if (grade.Value >= 0)
                     existingGrade.Value = grade.Value;
                 existingGrade.CreateAt = DateTime.Now;
+
                 db.Grades.Update(existingGrade);
                 await db.SaveChangesAsync();
             }

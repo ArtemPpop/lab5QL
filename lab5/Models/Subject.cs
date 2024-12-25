@@ -7,10 +7,10 @@ namespace lab5.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long SubjectId { get; set; }
+        public int SubjectId { get; set; }
         [Required]
         public string? Name { get; set; }
-        public ICollection<Grade> Grades { get; set; }
+        public ICollection<Grade>? Grades { get; set; }
         
     }
 }

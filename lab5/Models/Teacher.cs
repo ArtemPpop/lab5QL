@@ -7,11 +7,11 @@ namespace lab5.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long TeacherId { get; set; }
+        public int TeacherId { get; set; }
         [Required]
         public string Name { get; set; }
-        public ICollection<Grade> Grades { get; set; }
-        public ICollection<Subject> Subjects { get; set; }
+        public ICollection<Grade>? Grades { get; set; }
+        public ICollection<Subject>? Subjects { get; set; }
        
     }
 }

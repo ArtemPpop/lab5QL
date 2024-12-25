@@ -8,14 +8,14 @@ namespace lab5.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long StudentId { get; set; }
+        public int StudentId { get; set; }
         [Required]
         public string? Name { get; set; }
         [Required]
         public int NumberClass { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public ICollection<Grade> Grades { get; set; }
-        public ICollection<Attendance> Attendances { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public ICollection<Grade>? Grades { get; set; }
+        public ICollection<Attendance>? Attendances { get; set; }
        
     }
 }

@@ -1,4 +1,5 @@
 using lab5;
+using lab5.DAO;
 using lab5.Data;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -9,9 +10,12 @@ builder.Services.AddDbContext<JournalDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//builder.Services.AddScoped<IPostRepository, PostRepository>();
-//builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-builder.Services.AddGraphQLServer().AddQueryType<Query>().AddProjections().
+builder.Services.AddScoped<IStudentRepository,StudentRepository>();
+builder.Services.AddScoped<ITeacherRepository, TeacherRepository>();
+builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+builder.Services.AddScoped<IGradeRepository, GradeRepository>();
+builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+builder.Services.AddGraphQLServer().AddQueryType<lab5.Data.Query>().AddProjections().
     AddSorting().AddFiltering();
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

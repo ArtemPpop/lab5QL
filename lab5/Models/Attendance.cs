@@ -7,12 +7,13 @@ namespace lab5.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long AttendanceId { get; set; }
+        public int AttendanceId { get; set; }
         [Required]
         [ForeignKey("StudentId")]
-        public long StudentId { get; set; }
-        public Student Student { get; set; }
-        public DateTime Date { get; set; }
+        public int StudentId { get; set; }
+        public Student? Student { get; set; }
+        public DateTime? Date { get; set; }
+        [Required]
         public bool IsPresent { get; set; }
        
     }
