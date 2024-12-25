@@ -1,4 +1,5 @@
-﻿using lab5.Models;
+﻿using lab5.DAO;
+using lab5.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
@@ -6,111 +7,130 @@ namespace lab5.Data
 {
     public class Mutation
     {
-        public async Task<List<Student>> GetAllStudentsAsync([Service] JournalDbContext context)
-        {
-            return await context.Students
-                .Select(s => new Student
-                {
-                    StudentId = s.StudentId,
-                    Name = s.Name,
-                    NumberClass = s.NumberClass,
-                    DateOfBirth = s.DateOfBirth,
-                    Grades = s.Grades,  
-                    Attendances = s.Attendances 
-                })
-                .ToListAsync();
-        }
-        public async Task<List<Teacher>> GetAllTeachersAsync([Service] JournalDbContext context)
-        {
-            return await context.Teachers
-                .Select(t => new Teacher
-                {
-                    TeacherId = t.TeacherId,
-                    Name = t.Name,
-                    Subjects = t.Subjects,
-                    Grades = t.Grades 
-                })
-                .ToListAsync();
-        }
-        public async Task<List<Grade>> GetGradesByClassAndSubjectAsync([Service] JournalDbContext context, int numberClass, long subjectId)
-        {
-            return await context.Grades
-                .Where(g => g.SubjectId == subjectId && g.Student.NumberClass == numberClass)
-                .ToListAsync();
-        }
-        public async Task<int> CountAbsencesByClassAsync([Service] JournalDbContext context, int numberClass, DateTime startDate, DateTime endDate)
-        {
-            return await context.Attendances
-                .CountAsync(a => a.Date >= startDate && a.Date <= endDate && !a.IsPresent && a.Student.NumberClass == numberClass);
-        }
-        public async Task<double> CalculateAverageGradeByClassAsync([Service] JournalDbContext context, int numberClass)
-        {
-            var grades = await context.Grades
-                .Where(g => g.Student.NumberClass == numberClass)
-                .ToListAsync();
 
-            return grades.Any() ? grades.Average(g => g.Value) : 0;
-        }
-        public async Task<List<Teacher>> GetTeachersByClassAsync([Service] JournalDbContext context, int numberClass)
+        public async Task<Student?> UpdateStudent([Service] IStudentRepository studentRepository, Student model)
         {
-            var subjectIds = await context.Grades
-                .Where(g => g.Student.NumberClass == numberClass)
-                .Select(g => g.SubjectId)
-                .Distinct()
-                .ToListAsync();
-
-            return await context.Teachers
-                .Where(t => t.Subjects.Any(s => subjectIds.Contains(s.SubjectId)))
-                .Distinct()
-                .ToListAsync();
-        }
-        public async Task<List<Teacher>> GetTeachersBySubjectAsync([Service] JournalDbContext context, long subjectId)
-        {
-            return await context.Grades
-                .Where(g => g.SubjectId == subjectId)
-                .Select(g => g.Teacher)
-                .Distinct()
-                .ToListAsync();
+            return await studentRepository.UpdateStudent(model);
         }
 
-        public async Task<double> CalculateAverageGradeBySubjectAsync([Service] JournalDbContext context, long subjectId)
+        public async Task<bool> DeleteStudent([Service] IStudentRepository studentRepository, int id)
         {
-            var grades = await context.Grades
-                .Where(g => g.SubjectId == subjectId)
-                .ToListAsync();
+            return await studentRepository.DeleteStudent(id);
+        }
 
-            return grades.Any() ? grades.Average(g => g.Value) : 0;
+        public async Task<Student?> CreateStudent(
+            [Service] IStudentRepository studentRepository,
+            string name,
+            int numberClass,
+            DateTime dateOfBirth)
+        {
+            Student newStudent = new Student
+            {
+                Name = name,
+                NumberClass = numberClass,
+                DateOfBirth = dateOfBirth,
+
+            };
+            return await studentRepository.AddStudent(newStudent);
         }
 
 
-        public async Task<Dictionary<long, double>> GetStudentCardAsync(long studentId, [Service] JournalDbContext context)
+        public async Task<Subject?> UpdateSubject([Service] ISubjectRepository subjectRepository, Subject model)
         {
-            var grades = await context.Grades
-                .Where(g => g.StudentId == studentId)
-                .GroupBy(g => g.SubjectId)
-                .Select(grp => new
-                {
-                    SubjectId = grp.Key,
-                    AverageGrade = grp.Average(g => g.Value)
-                })
-                .ToListAsync();
-
-            return grades.ToDictionary(g => g.SubjectId, g => g.AverageGrade);
+            return await subjectRepository.UpdateSubject(model);
         }
 
-
-        public async Task<List<Subject>> GetSubjectsByClassAsync([Service] JournalDbContext context, int numberClass)
+        public async Task<bool> DeleteSubject([Service] ISubjectRepository subjectRepository, int id)
         {
-            var subjectIds = await context.Grades
-                .Where(g => g.Student.NumberClass == numberClass)
-                .Select(g => g.SubjectId)
-                .Distinct()
-                .ToListAsync();
-
-            return await context.Subjects
-                .Where(s => subjectIds.Contains(s.SubjectId))
-                .ToListAsync();
+            return await subjectRepository.DeleteSubject(id);
         }
 
+        public async Task<Subject?> CreateSubject(
+            [Service] ISubjectRepository subjectRepository,
+            string name)
+        {
+            Subject newSubject = new Subject
+            {
+                Name = name
+            };
+            return await subjectRepository.AddSubject(newSubject);
+        }
+
+        public async Task<Teacher?> UpdateTeacher([Service] ITeacherRepository teacherRepository, Teacher model)
+        {
+            return await teacherRepository.UpdateTeacher(model);
+        }
+
+        public async Task<bool> DeleteTeacher([Service] ITeacherRepository teacherRepository, int id)
+        {
+            return await teacherRepository.DeleteTeacher(id);
+        }
+
+        public async Task<Teacher?> CreateTeacher(
+            [Service] ITeacherRepository teacherRepository,
+            string name)
+        {
+            Teacher newTeacher = new Teacher
+            {
+                Name = name,
+         
+            };
+            return await teacherRepository.AddTeacher(newTeacher);
+        }
+
+        public async Task<Grade?> UpdateGrade([Service] IGradeRepository gradeRepository, Grade model)
+        {
+            return await gradeRepository.UpdateGrade(model);
+        }
+
+        public async Task<bool> DeleteGrade([Service] IGradeRepository gradeRepository, int id)
+        {
+            return await gradeRepository.DeleteGrade(id);
+        }
+
+        public async Task<Grade?> CreateGrade(
+            [Service] IGradeRepository gradeRepository,
+            int score,
+            Student student,
+            Teacher teacher,
+            Subject subject)
+        {
+            Grade newGrade = new Grade
+            {
+                Subject = subject,
+                Teacher = teacher,
+                Student = student,
+                Value = score
+                
+            };
+            return await gradeRepository.AddGrade(newGrade);
+        }
+
+        public async Task<Attendance?> UpdateAttendance([Service] IAttendanceRepository attendanceRepository, Attendance model)
+        {
+            return await attendanceRepository.UpdateAttendance(model);
+        }
+
+        public async Task<bool> DeleteAttendance([Service] IAttendanceRepository attendanceRepository, int id)
+        {
+            return await attendanceRepository.DeleteAttendance(id);
+        }
+
+        public async Task<Attendance?> CreateAttendance(
+            [Service] IAttendanceRepository attendanceRepository,
+            DateTime date,
+            bool isPresent,
+            Student student)
+        {
+            Attendance newAttendance = new Attendance
+            {
+                Date = date,
+                IsPresent = isPresent,
+                Student = student
+            };
+            return await attendanceRepository.AddAttendance(newAttendance);
+        }
+        
     }
+
 }
